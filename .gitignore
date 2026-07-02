@@ -1,0 +1,15 @@
+# OS
+.DS_Store
+
+# Java / IntelliJ
+out/
+*.class
+.idea/
+*.iml
+
+# Android / Gradle
+build/
+.gradle/
+local.properties
+*.apk
+captures/
