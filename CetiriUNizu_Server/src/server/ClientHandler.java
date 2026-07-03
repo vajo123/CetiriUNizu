@@ -1,5 +1,7 @@
 package server;
 
+import shared.RegisterMessage;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,10 +16,12 @@ public class ClientHandler implements Runnable {
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
+    private String username;
     private volatile PlayerStatus status = PlayerStatus.AVAILABLE;
 
     public ClientHandler(Socket socket) { this.socket = socket; }
 
+    public String getUsername() { return username; }
     public PlayerStatus getStatus() { return status; }
     public void setStatus(PlayerStatus status) { this.status = status; }
 
@@ -28,7 +32,7 @@ public class ClientHandler implements Runnable {
             out.flush();
             out.reset();
         } catch (IOException e) {
-            System.out.println("Greska pri slanju klijentu.");
+            System.out.println("Greska pri slanju ka " + username);
         }
     }
 
@@ -41,13 +45,31 @@ public class ClientHandler implements Runnable {
 
             Object msg;
             while ((msg = in.readObject()) != null) {
-                System.out.println("Primljeno: " + msg);
+                if (msg instanceof RegisterMessage) {
+                    handleRegister((RegisterMessage) msg);
+                }
             }
         } catch (Exception e) {
             // klijent se diskonektovao
         } finally {
-            try { socket.close(); } catch (IOException ignored) {}
-            System.out.println("Klijent se diskonektovao.");
+            cleanup();
         }
+    }
+
+    private void handleRegister(RegisterMessage m) {
+        this.username = m.username;
+        this.status = PlayerStatus.AVAILABLE;
+        ServerMain.clients.put(username, this);
+        System.out.println("Registrovan igrac: " + username);
+        ServerMain.broadcastPlayerList();
+    }
+
+    private void cleanup() {
+        if (username != null) {
+            ServerMain.clients.remove(username);
+            ServerMain.broadcastPlayerList();
+            System.out.println("Igrac napustio: " + username);
+        }
+        try { socket.close(); } catch (IOException ignored) {}
     }
 }
