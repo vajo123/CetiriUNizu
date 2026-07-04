@@ -67,6 +67,8 @@ public class ClientHandler implements Runnable {
             handleInvite((InviteMessage) msg);
         } else if (msg instanceof InviteResponseMessage) {
             handleInviteResponse((InviteResponseMessage) msg);
+        } else if (msg instanceof MoveMessage) {
+            if (session != null) session.handleMove(this, ((MoveMessage) msg).column);
         }
     }
 
