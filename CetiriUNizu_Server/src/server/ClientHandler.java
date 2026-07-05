@@ -69,6 +69,8 @@ public class ClientHandler implements Runnable {
             handleInviteResponse((InviteResponseMessage) msg);
         } else if (msg instanceof MoveMessage) {
             if (session != null) session.handleMove(this, ((MoveMessage) msg).column);
+        } else if (msg instanceof RematchMessage) {
+            if (session != null) session.handleRematch(this, ((RematchMessage) msg).accepted);
         }
     }
 
@@ -109,6 +111,7 @@ public class ClientHandler implements Runnable {
     private void cleanup() {
         if (username != null) {
             ServerMain.clients.remove(username);
+            if (session != null) session.handleDisconnect(this);
             ServerMain.broadcastPlayerList();
             System.out.println("Igrac napustio: " + username);
         }

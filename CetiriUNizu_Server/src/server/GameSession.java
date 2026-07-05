@@ -15,6 +15,9 @@ public class GameSession {
     private int currentPlayerNumber;
     private int firstPlayerNumber;
 
+    private Boolean aRematch = null;
+    private Boolean bRematch = null;
+
     public GameSession(ClientHandler playerA, ClientHandler playerB) {
         this.playerA = playerA;
         this.playerB = playerB;
@@ -65,6 +68,40 @@ public class GameSession {
         } else if (draw) {
             playerA.send(new GameOverMessage(0, true));
             playerB.send(new GameOverMessage(0, true));
+        }
+    }
+
+    public synchronized void handleRematch(ClientHandler from, boolean accepted) {
+        if (!accepted) {
+            endToLobby();
+            return;
+        }
+        if (from == playerA) aRematch = true; else bRematch = true;
+
+        if (Boolean.TRUE.equals(aRematch) && Boolean.TRUE.equals(bRematch)) {
+            aRematch = null;
+            bRematch = null;
+            board.reset();
+            firstPlayerNumber = (firstPlayerNumber == 1) ? 2 : 1;   // zamena ko pocinje
+            currentPlayerNumber = firstPlayerNumber;
+            sendStart();
+        }
+    }
+
+    private void endToLobby() {
+        playerA.setStatus(PlayerStatus.AVAILABLE);
+        playerB.setStatus(PlayerStatus.AVAILABLE);
+        playerA.setSession(null);
+        playerB.setSession(null);
+        ServerMain.broadcastPlayerList();
+    }
+
+    public synchronized void handleDisconnect(ClientHandler who) {
+        ClientHandler other = (who == playerA) ? playerB : playerA;
+        if (other != null && ServerMain.clients.containsKey(other.getUsername())) {
+            other.send(new ErrorMessage("Protivnik je napustio igru."));
+            other.setStatus(PlayerStatus.AVAILABLE);
+            other.setSession(null);
         }
     }
 }
