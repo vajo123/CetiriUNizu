@@ -78,6 +78,7 @@ public class LobbyActivity extends Activity implements NetworkManager.Listener {
         }
 
         tvStatus.setText("Povezivanje...");
+        btnConnect.setEnabled(false);   // odmah onemoguci da dupli klik ne otvori vise konekcija
         new Thread(() -> {
             boolean ok = NetworkManager.getInstance().connect(ip, port, username);
             runOnUiThread(() -> {
@@ -86,12 +87,12 @@ public class LobbyActivity extends Activity implements NetworkManager.Listener {
                     NetworkManager.getInstance().setListener(this);
                     NetworkManager.getInstance().send(new RegisterMessage(username));
                     tvStatus.setText("Povezan kao: " + username);
-                    btnConnect.setEnabled(false);
                     etIp.setEnabled(false);
                     etPort.setEnabled(false);
                     etUsername.setEnabled(false);
                 } else {
                     tvStatus.setText("Neuspesno povezivanje.");
+                    btnConnect.setEnabled(true);   // vrati mogucnost pokusaja na neuspeh
                     Toast.makeText(this, "Ne mogu da se povezem na server.", Toast.LENGTH_LONG).show();
                 }
             });
