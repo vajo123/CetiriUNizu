@@ -7,9 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-/**
- * Nit koja opsluzuje jednog klijenta.
- */
+/** Nit koja opsluzuje jednog klijenta. */
 public class ClientHandler implements Runnable {
 
     private final Socket socket;
@@ -28,7 +26,6 @@ public class ClientHandler implements Runnable {
     public GameSession getSession() { return session; }
     public void setSession(GameSession session) { this.session = session; }
 
-    /** Slanje objekta klijentu. synchronized da se tok ne pokvari iz vise niti. */
     public synchronized void send(Object msg) {
         try {
             out.writeObject(msg);
@@ -56,10 +53,18 @@ public class ClientHandler implements Runnable {
                 handleMessage(msg);
             }
         } catch (Exception e) {
-            // klijent se diskonektovao
+            // diskonekcija
         } finally {
             cleanup();
         }
+    }
+
+    private void handleRegister(RegisterMessage m) {
+        this.username = m.username;
+        this.status = PlayerStatus.AVAILABLE;
+        ServerMain.clients.put(username, this);
+        System.out.println("Registrovan igrac: " + username);
+        ServerMain.broadcastPlayerList();
     }
 
     private void handleMessage(Object msg) {
@@ -71,15 +76,9 @@ public class ClientHandler implements Runnable {
             if (session != null) session.handleMove(this, ((MoveMessage) msg).column);
         } else if (msg instanceof RematchMessage) {
             if (session != null) session.handleRematch(this, ((RematchMessage) msg).accepted);
+        } else if (msg instanceof LeaveGameMessage) {
+            if (session != null) session.handleLeave(this);
         }
-    }
-
-    private void handleRegister(RegisterMessage m) {
-        this.username = m.username;
-        this.status = PlayerStatus.AVAILABLE;
-        ServerMain.clients.put(username, this);
-        System.out.println("Registrovan igrac: " + username);
-        ServerMain.broadcastPlayerList();
     }
 
     private void handleInvite(InviteMessage m) {

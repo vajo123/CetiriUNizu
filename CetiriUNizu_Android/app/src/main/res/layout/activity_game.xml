@@ -37,4 +37,17 @@
         android:elevation="2dp"
         android:padding="10dp" />
 
+    <Button
+        android:id="@+id/btnLeave"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="14dp"
+        android:text="Napusti igru"
+        android:textColor="#A32D2D"
+        android:textStyle="bold"
+        android:textSize="15sp"
+        android:textAllCaps="false"
+        android:background="@drawable/btn_leave"
+        android:stateListAnimator="@null" />
+
 </LinearLayout>

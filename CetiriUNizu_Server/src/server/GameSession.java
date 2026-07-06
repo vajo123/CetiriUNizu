@@ -29,7 +29,7 @@ public class GameSession {
     public synchronized void start() {
         board.reset();
         gameOver = false;
-        firstPlayerNumber = 1;                 // prvi igra onaj ko je inicirao (playerA)
+        firstPlayerNumber = 1;
         currentPlayerNumber = firstPlayerNumber;
         sendStart();
     }
@@ -113,5 +113,19 @@ public class GameSession {
             other.setStatus(PlayerStatus.AVAILABLE);
             other.setSession(null);
         }
+    }
+
+    /** Igrac je svesno napustio partiju (dugme "Napusti igru"). Oba se vracaju u lobi. */
+    public synchronized void handleLeave(ClientHandler who) {
+        gameOver = true;
+        ClientHandler other = (who == playerA) ? playerB : playerA;
+        if (other != null && ServerMain.clients.containsKey(other.getUsername())) {
+            other.send(new ErrorMessage("Protivnik je napustio igru."));
+            other.setStatus(PlayerStatus.AVAILABLE);
+            other.setSession(null);
+        }
+        who.setStatus(PlayerStatus.AVAILABLE);
+        who.setSession(null);
+        ServerMain.broadcastPlayerList();
     }
 }

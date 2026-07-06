@@ -16,6 +16,7 @@ import shared.ErrorMessage;
 import shared.GameBoard;
 import shared.GameOverMessage;
 import shared.GameStartMessage;
+import shared.LeaveGameMessage;
 import shared.MoveMessage;
 import shared.PlayerListMessage;
 import shared.RematchMessage;
@@ -36,6 +37,7 @@ public class GameActivity extends Activity implements NetworkManager.Listener {
     private int myPlayerNumber;
     private boolean myTurn;
     private String opponent;
+    private boolean waitingRematch;   // kliknuo "Da" i ceka da protivnik odgovori
 
     private final GameBoard board = new GameBoard();
     private final ImageView[][] cells = new ImageView[ROWS][COLS];
@@ -52,6 +54,7 @@ public class GameActivity extends Activity implements NetworkManager.Listener {
         tvTurn = findViewById(R.id.tvTurn);
         boardGrid = findViewById(R.id.boardGrid);
         columnButtons = findViewById(R.id.columnButtons);
+        findViewById(R.id.btnLeave).setOnClickListener(v -> confirmLeave());
 
         GameStartMessage start = pendingStart;
         if (start != null) {
@@ -112,6 +115,7 @@ public class GameActivity extends Activity implements NetworkManager.Listener {
     }
 
     private void onColumnClick(int col) {
+        if (waitingRematch) return;
         if (!myTurn) {
             Toast.makeText(this, "Nije tvoj red - sacekaj protivnika.", Toast.LENGTH_SHORT).show();
             return;
@@ -140,6 +144,7 @@ public class GameActivity extends Activity implements NetworkManager.Listener {
 
         } else if (message instanceof GameStartMessage) {
             GameStartMessage g = (GameStartMessage) message;
+            waitingRematch = false;
             myPlayerNumber = g.myPlayerNumber;
             myTurn = g.yourTurn;
             opponent = g.opponent;
@@ -157,7 +162,12 @@ public class GameActivity extends Activity implements NetworkManager.Listener {
             }
 
         } else if (message instanceof PlayerListMessage) {
-            finish();   // partija zavrsena bez rematcha -> nazad u lobi
+            // partija zavrsena bez rematcha -> nazad u lobi
+            if (waitingRematch) {
+                Toast.makeText(this, "Protivnik ne želi revanš. Nazad u lobi.",
+                        Toast.LENGTH_LONG).show();
+            }
+            finish();
         }
     }
 
@@ -186,13 +196,37 @@ public class GameActivity extends Activity implements NetworkManager.Listener {
                 .setTitle("Kraj igre")
                 .setMessage(msg + "\n\nDa li zelis da igras ponovo?")
                 .setCancelable(false)
-                .setPositiveButton("Da", (d, w) ->
-                        NetworkManager.getInstance().send(new RematchMessage(true)))
+                .setPositiveButton("Da", (d, w) -> {
+                    NetworkManager.getInstance().send(new RematchMessage(true));
+                    waitingRematch = true;
+                    myTurn = false;
+                    board.reset();
+                    resetBoardUI();
+                    tvTurn.setText("Čekaš da protivnik prihvati revanš...");
+                })
                 .setNegativeButton("Ne", (d, w) -> {
                     NetworkManager.getInstance().send(new RematchMessage(false));
                     finish();
                 })
                 .show();
+    }
+
+    /** Potvrda i napustanje partije ("necu vise da igram"). */
+    private void confirmLeave() {
+        new AlertDialog.Builder(this)
+                .setTitle("Napustiti igru?")
+                .setMessage("Vraćaš se u lobi, a protivnik će biti obavešten.")
+                .setPositiveButton("Napusti", (d, w) -> {
+                    NetworkManager.getInstance().send(new LeaveGameMessage());
+                    finish();
+                })
+                .setNegativeButton("Ostani", null)
+                .show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        confirmLeave();
     }
 
     @Override
