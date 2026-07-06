@@ -1,122 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/bg"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp"
-    android:paddingTop="28dp"
-    android:paddingBottom="16dp">
+    android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="4 u nizu"
-        android:textColor="@color/primary"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:letterSpacing="0.01" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Poveži se na server i izaberi protivnika"
-        android:textColor="@color/text_muted"
-        android:textSize="14sp"
-        android:paddingTop="2dp"
-        android:paddingBottom="20dp" />
-
-    <!-- Kartica za povezivanje -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/bg_card"
-        android:elevation="3dp"
-        android:padding="20dp">
-
-        <EditText
-            android:id="@+id/etIp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="IP servera (emulator: 10.0.2.2)"
-            android:inputType="text"
-            android:text="10.0.2.2"
-            android:background="@drawable/bg_input"
-            android:padding="14dp"
-            android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_muted"
-            android:layout_marginBottom="12dp" />
-
-        <EditText
-            android:id="@+id/etPort"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Port"
-            android:inputType="number"
-            android:text="5000"
-            android:background="@drawable/bg_input"
-            android:padding="14dp"
-            android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_muted"
-            android:layout_marginBottom="12dp" />
-
-        <EditText
-            android:id="@+id/etUsername"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Korisničko ime"
-            android:inputType="text"
-            android:background="@drawable/bg_input"
-            android:padding="14dp"
-            android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_muted"
-            android:layout_marginBottom="16dp" />
-
-        <Button
-            android:id="@+id/btnConnect"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:text="Poveži se"
-            android:textColor="@color/on_primary"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textAllCaps="false"
-            android:background="@drawable/btn_primary"
-            android:stateListAnimator="@null" />
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="28dp"
+        android:paddingBottom="24dp">
 
         <TextView
-            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4 u nizu"
+            android:textColor="@color/primary"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.01" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nisi povezan."
+            android:text="Poveži se na server i izaberi protivnika"
             android:textColor="@color/text_muted"
-            android:textSize="13sp"
+            android:textSize="14sp"
+            android:paddingTop="2dp"
+            android:paddingBottom="20dp" />
+
+        <!-- Kartica za povezivanje -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:elevation="3dp"
+            android:padding="20dp">
+
+            <EditText
+                android:id="@+id/etIp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="IP servera (emulator: 10.0.2.2)"
+                android:inputType="text"
+                android:text="10.0.2.2"
+                android:background="@drawable/bg_input"
+                android:padding="14dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_muted"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/etPort"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Port"
+                android:inputType="number"
+                android:text="5000"
+                android:background="@drawable/bg_input"
+                android:padding="14dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_muted"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Korisničko ime"
+                android:inputType="text"
+                android:background="@drawable/bg_input"
+                android:padding="14dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_muted"
+                android:layout_marginBottom="16dp" />
+
+            <Button
+                android:id="@+id/btnConnect"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Poveži se"
+                android:textColor="@color/on_primary"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textAllCaps="false"
+                android:background="@drawable/btn_primary"
+                android:stateListAnimator="@null" />
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nisi povezan."
+                android:textColor="@color/text_muted"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:paddingTop="12dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DOSTUPNI IGRAČI"
+            android:textColor="@color/text_muted"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:paddingTop="24dp"
+            android:paddingBottom="10dp" />
+
+        <LinearLayout
+            android:id="@+id/playersContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Trenutno nema dostupnih igrača."
+            android:textColor="@color/text_muted"
+            android:textSize="14sp"
             android:gravity="center"
-            android:paddingTop="12dp" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="DOSTUPNI IGRAČI"
-        android:textColor="@color/text_muted"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:letterSpacing="0.08"
-        android:paddingTop="24dp"
-        android:paddingBottom="10dp" />
-
-    <ListView
-        android:id="@+id/lvPlayers"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="10dp"
-        android:listSelector="@android:color/transparent"
-        android:scrollbarStyle="outsideOverlay" />
-
-</LinearLayout>
+</ScrollView>

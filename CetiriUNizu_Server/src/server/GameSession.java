@@ -14,6 +14,7 @@ public class GameSession {
     private final GameBoard board = new GameBoard();
     private int currentPlayerNumber;
     private int firstPlayerNumber;
+    private boolean gameOver = false;
 
     private Boolean aRematch = null;
     private Boolean bRematch = null;
@@ -27,6 +28,7 @@ public class GameSession {
 
     public synchronized void start() {
         board.reset();
+        gameOver = false;
         firstPlayerNumber = 1;                 // prvi igra onaj ko je inicirao (playerA)
         currentPlayerNumber = firstPlayerNumber;
         sendStart();
@@ -39,6 +41,11 @@ public class GameSession {
 
     public synchronized void handleMove(ClientHandler from, int column) {
         int playerNum = numberFor(from);
+
+        if (gameOver) {
+            from.send(new ErrorMessage("Igra je zavrsena - odluci da li zelis revans."));
+            return;
+        }
 
         if (playerNum != currentPlayerNumber) {
             from.send(new ErrorMessage("Nije tvoj red - sacekaj da protivnik odigra."));
@@ -63,9 +70,11 @@ public class GameSession {
         playerB.send(update);
 
         if (win) {
+            gameOver = true;
             playerA.send(new GameOverMessage(playerNum, false));
             playerB.send(new GameOverMessage(playerNum, false));
         } else if (draw) {
+            gameOver = true;
             playerA.send(new GameOverMessage(0, true));
             playerB.send(new GameOverMessage(0, true));
         }
@@ -82,6 +91,7 @@ public class GameSession {
             aRematch = null;
             bRematch = null;
             board.reset();
+            gameOver = false;
             firstPlayerNumber = (firstPlayerNumber == 1) ? 2 : 1;   // zamena ko pocinje
             currentPlayerNumber = firstPlayerNumber;
             sendStart();

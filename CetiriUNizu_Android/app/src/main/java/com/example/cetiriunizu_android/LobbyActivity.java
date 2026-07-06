@@ -4,10 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,10 +29,9 @@ public class LobbyActivity extends Activity implements NetworkManager.Listener {
 
     private EditText etIp, etPort, etUsername;
     private Button btnConnect;
-    private ListView lvPlayers;
-    private TextView tvStatus;
+    private LinearLayout playersContainer;
+    private TextView tvStatus, tvEmpty;
 
-    private ArrayAdapter<String> adapter;
     private final ArrayList<String> players = new ArrayList<>();
     private boolean connected = false;
 
@@ -44,20 +44,11 @@ public class LobbyActivity extends Activity implements NetworkManager.Listener {
         etPort = findViewById(R.id.etPort);
         etUsername = findViewById(R.id.etUsername);
         btnConnect = findViewById(R.id.btnConnect);
-        lvPlayers = findViewById(R.id.lvPlayers);
+        playersContainer = findViewById(R.id.playersContainer);
         tvStatus = findViewById(R.id.tvStatus);
-
-        adapter = new ArrayAdapter<>(this, R.layout.row_player, R.id.tvPlayerName, players);
-        lvPlayers.setAdapter(adapter);
+        tvEmpty = findViewById(R.id.tvEmpty);
 
         btnConnect.setOnClickListener(v -> connect());
-
-        lvPlayers.setOnItemClickListener((parent, view, position, id) -> {
-            String opponent = players.get(position);
-            NetworkManager.getInstance().send(
-                    new InviteMessage(NetworkManager.getInstance().getUsername(), opponent));
-            Toast.makeText(this, "Poziv poslat igracu: " + opponent, Toast.LENGTH_SHORT).show();
-        });
     }
 
     @Override
@@ -132,7 +123,32 @@ public class LobbyActivity extends Activity implements NetworkManager.Listener {
     private void updatePlayers(ArrayList<String> list) {
         players.clear();
         players.addAll(list);
-        adapter.notifyDataSetChanged();
+        renderPlayers();
+    }
+
+    /** Crta dostupne igrace kao kartice u kontejneru (radi i unutar ScrollView-a). */
+    private void renderPlayers() {
+        playersContainer.removeAllViews();
+        tvEmpty.setVisibility(players.isEmpty() ? View.VISIBLE : View.GONE);
+
+        LayoutInflater inflater = getLayoutInflater();
+        int gap = (int) (10 * getResources().getDisplayMetrics().density);
+        for (String name : players) {
+            final String opponent = name;
+            View row = inflater.inflate(R.layout.row_player, playersContainer, false);
+            ((TextView) row.findViewById(R.id.tvPlayerName)).setText(name);
+
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) row.getLayoutParams();
+            lp.bottomMargin = gap;
+            row.setLayoutParams(lp);
+
+            row.setOnClickListener(v -> {
+                NetworkManager.getInstance().send(
+                        new InviteMessage(NetworkManager.getInstance().getUsername(), opponent));
+                Toast.makeText(this, "Poziv poslat igraču: " + opponent, Toast.LENGTH_SHORT).show();
+            });
+            playersContainer.addView(row);
+        }
     }
 
     private void showInviteDialog(InviteMessage m) {

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import shared.PlayerListMessage;
 
@@ -30,6 +32,14 @@ public class NetworkManager {
     private volatile Listener listener;
     private String username;
     private volatile PlayerListMessage lastPlayerList;
+
+    /** Jedna pozadinska nit za SVA slanja - garantuje redosled i sprecava
+     *  istovremeni upis vise niti u isti ObjectOutputStream (korupcija toka). */
+    private final ExecutorService sendExecutor = Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r, "net-send");
+        t.setDaemon(true);
+        return t;
+    });
 
     public String getUsername() { return username; }
     public PlayerListMessage getLastPlayerList() { return lastPlayerList; }
@@ -69,9 +79,10 @@ public class NetworkManager {
         t.start();
     }
 
-    /** Slanje poruke serveru - uvek iz nove pozadinske niti. */
+    /** Slanje poruke serveru - uvek u pozadinskoj niti, ali SERIJALIZOVANO
+     *  (jedan executor) tako da se poruke salju jedna za drugom bez korupcije. */
     public void send(Object msg) {
-        new Thread(() -> {
+        sendExecutor.execute(() -> {
             try {
                 if (out != null) {
                     out.writeObject(msg);
@@ -79,7 +90,7 @@ public class NetworkManager {
                     out.reset();
                 }
             } catch (IOException ignored) {}
-        }).start();
+        });
     }
 
     public void close() {
