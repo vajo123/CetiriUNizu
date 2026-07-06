@@ -3,21 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:background="@color/bg"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/tvTurn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="..."
-        android:textSize="16sp"
+        android:textColor="@color/on_primary"
+        android:textSize="15sp"
         android:textStyle="bold"
-        android:paddingBottom="8dp" />
+        android:lineSpacingExtra="3dp"
+        android:gravity="center"
+        android:background="@drawable/bg_turn_banner"
+        android:elevation="3dp"
+        android:padding="16dp"
+        android:layout_marginBottom="14dp" />
 
     <LinearLayout
         android:id="@+id/columnButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal" />
 
     <GridLayout
@@ -25,8 +33,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="8dp"
-        android:background="#37474F"
-        android:padding="6dp" />
+        android:background="@drawable/bg_board"
+        android:elevation="2dp"
+        android:padding="10dp" />
 
 </LinearLayout>

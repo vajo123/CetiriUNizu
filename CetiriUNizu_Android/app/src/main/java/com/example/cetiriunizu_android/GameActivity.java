@@ -2,6 +2,7 @@ package com.example.cetiriunizu_android;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -72,8 +73,16 @@ public class GameActivity extends Activity implements NetworkManager.Listener {
             final int col = c;
             Button b = new Button(this);
             b.setText("▼");
-            b.setLayoutParams(new LinearLayout.LayoutParams(
-                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+            b.setTextColor(Color.WHITE);
+            b.setTextSize(14f);
+            b.setAllCaps(false);
+            b.setBackgroundResource(R.drawable.btn_column);
+            b.setStateListAnimator(null);
+            b.setPadding(0, 18, 0, 18);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+            lp.setMargins(3, 0, 3, 0);
+            b.setLayoutParams(lp);
             b.setOnClickListener(v -> onColumnClick(col));
             columnButtons.addView(b);
         }

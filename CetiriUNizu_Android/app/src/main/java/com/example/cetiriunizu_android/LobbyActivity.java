@@ -47,7 +47,7 @@ public class LobbyActivity extends Activity implements NetworkManager.Listener {
         lvPlayers = findViewById(R.id.lvPlayers);
         tvStatus = findViewById(R.id.tvStatus);
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, players);
+        adapter = new ArrayAdapter<>(this, R.layout.row_player, R.id.tvPlayerName, players);
         lvPlayers.setAdapter(adapter);
 
         btnConnect.setOnClickListener(v -> connect());
